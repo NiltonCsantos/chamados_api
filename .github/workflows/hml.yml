@@ -40,6 +40,6 @@ jobs:
       - name: Pull image from docker hub
         run: docker pull ${{ secrets.DOCKER_USER_NAME }}/chamados:latest
       - name: Remove docker container
-        run: docker rm -f api_chamados
+        run: docker rm -f chamados
       - name: Run docker container
-        run: sudo docker run -d --name api_chamados -p 8080:8080 -e DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }} -e DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} -e DATABASE_URL=${{ secrets.DATABASE_URL }} -e JWT_SECRET=${{secrets.JWT_SECRET}} --network net-api ${{ secrets.DOCKER_USER_NAME }}/chamados
+        run: sudo docker run -d --name chamados -p 8080:8080 -e DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }} -e DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} -e DATABASE_URL=${{ secrets.DATABASE_URL }} -e JWT_SECRET=${{secrets.JWT_SECRET}} --network net-api ${{ secrets.DOCKER_USER_NAME }}/chamados
