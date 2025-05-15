@@ -1,0 +1,48 @@
+name: Deploy Application Feira
+
+on:
+  push:
+    branches:
+      - dev
+  pull_request:
+    branches:
+      - dev
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Build project
+        run: mvn clean install -DskipTests
+
+      - name: Login Docker Hub
+        run: docker login -u ${{secrets.DOCKER_USER_NAME}} -p ${{secrets.DOCKER_PASSWORD}}
+
+      - name : Build docker image
+        run: docker build -t cesar468dev/chamados-api .
+
+      - name: push image docker
+        run: docker push cesar468dev/chamados-api
+
+  deploy:
+    needs: build
+    runs-on: self-hosted
+    steps:
+      - name: Pull image from docker hub
+        run: docker pull cesar468dev/chamados-api:latest
+      - name: Remove docker container
+        run: docker rm -f api_c
+      - name: Run docker container
+        run: sudo docker run -d --name api_c -p 8080:8080 -e USERNAME=${{ secrets.USERNAME }} -e PASSWORD=${{ secrets.PASSWORD }} -e URL=${{ secrets.URL }} --network net-api cesar468dev/chamados-api
+
+
+

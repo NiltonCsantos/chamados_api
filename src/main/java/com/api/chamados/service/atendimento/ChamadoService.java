@@ -8,7 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface ChamadoService {
-    Page<ChamadoDtoComHistorico> listarChamadosComFiltros(ChamadoFiltroForm filtro, Pageable pageable);
+    Page<ChamadoDto> listarChamadosComFiltros(ChamadoFiltroForm filtro, Pageable pageable);
     ChamadoDto buscarChamadoPorId(Long chaNrId);
     void gerenciarChamado(ChamadoForm form, Long chaNrId);
 }

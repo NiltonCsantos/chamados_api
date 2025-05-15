@@ -29,13 +29,15 @@ public class ChamadoServiceImpl extends BaseServiceImpl implements ChamadoServic
     private final EquipeReposity equipeReposity;
 
     @Override
-    public Page<ChamadoDtoComHistorico> listarChamadosComFiltros(ChamadoFiltroForm filtro, Pageable pageable) {
-        return null;
+    public Page<ChamadoDto> listarChamadosComFiltros(ChamadoFiltroForm filtro, Pageable pageable) {
+        return chamadoRepository.listarChamadosByFiltro(filtro, pageable).map(ChamadoDto::of);
     }
 
     @Override
     public ChamadoDto buscarChamadoPorId(Long chaNrId) {
-        return null;
+        var chamado = chamadoRepository.findById(chaNrId)
+                .orElseThrow(() -> new RuntimeException("Não foi possível localizar chamdo"));
+        return ChamadoDto.of(chamado);
     }
 
     @Override

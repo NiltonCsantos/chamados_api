@@ -11,4 +11,5 @@ public record ChamadoForm(
         @NotBlank(message = "É necessário informar o titulo do chamado")
         String chaTxTitulo
 ) {
+
 }

@@ -1,4 +1,10 @@
 package com.api.chamados.service.atendimento.form;
 
-public record ChamadoFiltroForm() {
+import com.api.chamados.model.atendimento.enums.StatusChamadoEnum;
+
+public record ChamadoFiltroForm(
+        StatusChamadoEnum chaTxStatus,
+        String chaTxTitulo,
+        Long eqiNrId
+) {
 }

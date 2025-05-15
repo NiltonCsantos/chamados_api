@@ -2,17 +2,21 @@ package com.api.chamados.controller.atendimento;
 
 import com.api.chamados.config.handler.ResponseDto;
 import com.api.chamados.service.atendimento.ChamadoService;
+import com.api.chamados.service.atendimento.dto.ChamadoDto;
+import com.api.chamados.service.atendimento.form.ChamadoFiltroForm;
 import com.api.chamados.service.atendimento.form.ChamadoForm;
-import com.api.chamados.service.autenticacao.usuario.form.EmpresaGroup;
-import com.api.chamados.service.autenticacao.usuario.form.UsuarioRegistroForm;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
-import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -40,6 +44,21 @@ public class ChamadoController {
         chamadoService.gerenciarChamado(form, chaNrId);
         return  ResponseDto.<Void>builder()
                 .status(HttpStatus.CREATED)
+                .build();
+    }
+
+    @Operation(summary = "Listar chamados", description = "Serviços responsável por listar chamados.")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ChamadoDto.class)))
+    @GetMapping("/chamados")
+    public ResponseEntity<ResponseDto<Page<ChamadoDto>>> listarChamado(
+            @ParameterObject ChamadoFiltroForm filtro,
+            @PageableDefault(size = Integer.MAX_VALUE) Pageable pageable) {
+
+        var chamados = chamadoService.listarChamadosComFiltros(filtro, pageable);
+
+        return ResponseDto.<Page<ChamadoDto>>builder()
+                .status(HttpStatus.OK)
+                .response(chamados)
                 .build();
     }
 }
