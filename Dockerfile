@@ -1,7 +1,7 @@
 FROM eclipse-temurin:17-jre-alpine
 
 # Nome exato do JAR gerado pelo Maven
-ARG JAR_FILE=target/feira-conectada-api-1.0.0.jar
+ARG JAR_FILE=target/chamados-1.0.0.jar
 
 # Criar o diretório /app
 RUN mkdir -p /app
