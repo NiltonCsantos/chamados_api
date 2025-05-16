@@ -25,12 +25,12 @@ jobs:
         run: mvn clean install -DskipTests
 
       - name: Login Docker Hub
-        run: docker login -u ${{secrets.DOCKER_USER_NAME}} -p ${{secrets.DOCKER_PASSWORD}}
+        run: docker login -u ${{ secrets.DOCKER_USER_NAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build docker image
         run: docker build -t ${{ secrets.DOCKER_USER_NAME }}/chamados .
 
-      - name: push image docker
+      - name: Push image to Docker Hub
         run: docker push ${{ secrets.DOCKER_USER_NAME }}/chamados
 
   deploy:
@@ -39,11 +39,20 @@ jobs:
     steps:
       - name: Remove old docker images
         run: docker images ${{ secrets.DOCKER_USER_NAME }}/chamados --format "{{.ID}}" | xargs -r docker rmi -f
-      - name: Debug imagem Docker
-        run: echo "${{ secrets.DOCKER_USER_NAME }}/chamados"
-      - name: Pull image from docker hub
+
+      - name: Pull image from Docker Hub
         run: docker pull ${{ secrets.DOCKER_USER_NAME }}/chamados:latest
-      - name: Remove docker container
-        run: docker rm -f chamados_api
+
+      - name: Remove existing container
+        run: docker rm -f chamados_api || true
+
       - name: Run docker container
-        run: sudo docker run -d --name chamados_api -p 8080:8080 -e DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }} -e DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} -e DATABASE_URL=${{ secrets.DATABASE_URL }} --network net-api ${{ secrets.DOCKER_USER_NAME }}/chamados
+        run: |
+          docker run -d \
+            --name chamados_api \
+            -p 8080:8080 \
+            -e DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }} \
+            -e DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} \
+            -e DATABASE_URL=${{ secrets.DATABASE_URL }} \
+            --network net-api \
+            ${{ secrets.DOCKER_USER_NAME }}/chamados
