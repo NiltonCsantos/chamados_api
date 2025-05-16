@@ -46,4 +46,4 @@ jobs:
       - name: Remove docker container
         run: docker rm -f chamados_api
       - name: Run docker container
-        run: sudo docker run -d --name chamados_api -p 8080:8080 -e DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }} -e DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} -e DATABASE_URL=${{ secrets.DATABASE_URL }} -e JWT_SECRET=${{secrets.JWT_SECRET}} --network net-api cesar468dev/chamados
+        run: sudo docker run -d --name chamados_api -p 8080:8080 -e DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }} -e DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} -e DATABASE_URL=${{ secrets.DATABASE_URL }} --network net-api cesar468dev/chamados
