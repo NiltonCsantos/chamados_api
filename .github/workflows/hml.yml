@@ -1,4 +1,4 @@
-name: Deploy Application Feira
+name: Deploy Chamados
 
 on:
   push:
@@ -27,7 +27,7 @@ jobs:
       - name: Login Docker Hub
         run: docker login -u ${{secrets.DOCKER_USER_NAME}} -p ${{secrets.DOCKER_PASSWORD}}
 
-      - name : Build docker image
+      - name: Build docker image
         run: docker build -t ${{ secrets.DOCKER_USER_NAME }}/chamados .
 
       - name: push image docker
@@ -37,6 +37,8 @@ jobs:
     needs: build
     runs-on: self-hosted
     steps:
+      - name: Debug imagem Docker
+        run: echo "${{ secrets.DOCKER_USER_NAME }}/chamados"
       - name: Pull image from docker hub
         run: docker pull ${{ secrets.DOCKER_USER_NAME }}/chamados:latest
       - name: Remove docker container
