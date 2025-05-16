@@ -55,4 +55,4 @@ jobs:
             -e DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} \
             -e DATABASE_URL=${{ secrets.DATABASE_URL }} \
             --network net-api \
-            ${{ secrets.DOCKER_USER_NAME }}/chamados
+            ${{ secrets.DOCKER_USER_NAME }} /chamados
