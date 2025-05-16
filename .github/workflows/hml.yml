@@ -47,12 +47,4 @@ jobs:
         run: docker rm -f chamados_api || true
 
       - name: Run docker container
-        run: |
-          docker run -d \
-            --name chamados_api \
-            -p 8080:8080 \
-            -e DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }} \
-            -e DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} \
-            -e DATABASE_URL=${{ secrets.DATABASE_URL }} \
-            --network net-api \
-            ${{ secrets.DOCKER_USER_NAME }} /chamados
+        run: docker run -d -p 8080:8080 -e DATABASE_USERNAME=${{secrets.DATABASE_USERNAME}} -e DATABASE_PASSWORD='${{secrets.DATABASE_PASSWORD}}' -e DATABASE_URL=${{secrets.DATABASE_URL}} --name api_chamados cesar468dev/chamados_api
