@@ -37,6 +37,9 @@ jobs:
     needs: build
     runs-on: self-hosted
     steps:
+      - name: Remove old docker images
+      - run: docker images ${{ secrets.DOCKER_USER_NAME }}/chamados --format "{{.ID}}" | xargs -r docker rmi -f
+
       - name: Debug imagem Docker
         run: echo "${{ secrets.DOCKER_USER_NAME }}/chamados"
       - name: Pull image from docker hub
