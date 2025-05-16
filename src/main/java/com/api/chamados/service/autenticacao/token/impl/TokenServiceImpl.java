@@ -18,6 +18,7 @@ public class TokenServiceImpl implements TokenService {
     @Value("${api.token.secret}")
     private String secret;
 
+
     @Override
     public String gerarToken(UserDetails usuario, Map<String, Object> claims) {
         return Jwts.builder()
