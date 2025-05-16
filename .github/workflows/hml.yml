@@ -46,4 +46,4 @@ jobs:
       - name: Remove docker container
         run: docker rm -f api_chamados
       - name: Run docker container
-        run: docker run -d -p 8080:8080 -e DATABASE_USERNAME=${{secrets.DATABASE_USERNAME}} -e JWT_SECRET=${{secrets.JWT_SECRET}} -e DATABASE_PASSWORD='${{secrets.DATABASE_PASSWORD}}' -e DATABASE_URL=${{secrets.DATABASE_URL}} --name api_chamados ${{secrets.DATABASE_URL}}/chamados
+        run: docker run -d -p 8080:8080 -e DATABASE_USERNAME=${{secrets.DATABASE_USERNAME}} -e JWT_SECRET=${{secrets.JWT_SECRET}} -e DATABASE_PASSWORD='${{secrets.DATABASE_PASSWORD}}' -e DATABASE_URL=${{secrets.DATABASE_URL}} --name api_chamados ${{secrets.DATABASE_URL}} /chamados
