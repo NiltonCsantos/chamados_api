@@ -39,11 +39,9 @@ jobs:
     steps:
       - name: Remove old docker images
         run: docker images ${{ secrets.DOCKER_USER_NAME }}/chamados --format "{{.ID}}" | xargs -r docker rmi -f
-      - name: Debug imagem Docker
-        run: echo "${{ secrets.DOCKER_USER_NAME }}/chamados"
       - name: Pull image from docker hub
         run: docker pull ${{ secrets.DOCKER_USER_NAME }}/chamados:latest
       - name: Remove docker container
         run: docker rm -f api_chamados
       - name: Run docker container
-        run: docker run -d -p 8080:8080 -e DATABASE_USERNAME=${{secrets.DATABASE_USERNAME}} -e JWT_SECRET=${{secrets.JWT_SECRET}} -e DATABASE_PASSWORD='${{secrets.DATABASE_PASSWORD}}' -e DATABASE_URL=${{secrets.DATABASE_URL}} --name api_chamados ${{secrets.DOCKER_USER_NAME}}/chamados
+        run: docker run --network ${{secrets.NETWORK}}  -d -p 8080:8080 -e DATABASE_USERNAME=${{secrets.DATABASE_USERNAME}} -e JWT_SECRET=${{secrets.JWT_SECRET}} -e DATABASE_PASSWORD='${{secrets.DATABASE_PASSWORD}}' -e DATABASE_URL=${{secrets.DATABASE_URL}} --name api_chamados ${{secrets.DOCKER_USER_NAME}}/chamados
