@@ -37,6 +37,8 @@ jobs:
     needs: build
     runs-on: self-hosted
     steps:
+      - name: stop container
+        run: docker stop api_chamados
       - name: Remove old docker images
         run: docker images ${{ secrets.DOCKER_USER_NAME }}/chamados --format "{{.ID}}" | xargs -r docker rmi -f
       - name: Pull image from docker hub
