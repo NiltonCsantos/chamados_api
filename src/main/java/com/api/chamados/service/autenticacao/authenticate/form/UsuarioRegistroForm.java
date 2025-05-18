@@ -34,8 +34,6 @@ public record UsuarioRegistroForm(
         @Size(min = 11, max = 11, message = "Telefone inválido", groups = {ProfissionalGroup.class})
         String proTxCelular,
         @NotNull(message = "É obrigatório informar a equipe", groups = {ProfissionalGroup.class})
-        Long eqNrId,
-
-        Long usuNrId
+        Long eqiNrId
 ) {
 }

@@ -28,7 +28,7 @@ public class AuthenticationController {
     @Operation(summary = "Cadastro de empresa", description = "Endpoint responsável por cadastrar uma empresa.")
     @ApiResponse(responseCode = "201", description = "CREATED")
     public ResponseEntity<ResponseDto<Void>> registrarEmpresa(@RequestBody @Validated({EmpresaGroup.class, Default.class}) UsuarioRegistroForm form){
-        authenticationService.salvarEmpresa(form);
+        authenticationService.salvarEmpresa(form, null);
         return  ResponseDto.<Void>builder()
                 .status(HttpStatus.CREATED)
                 .build();

@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -49,16 +50,16 @@ public class AuthenticateServiceImpl implements AuthenticationService {
 
 
     @Override
-    public void salvarEmpresa(UsuarioRegistroForm form) {
+    public void salvarEmpresa(UsuarioRegistroForm form, Long empNrId) {
 
-        if (form.usuNrId() == null && empresaRepository.existsByEmpTxCnpj(form.empTxCnpj())) {
+        if (empNrId == null && empresaRepository.existsByEmpTxCnpj(form.empTxCnpj())) {
             throw new RuntimeException("Empresa já cadastrada");
         }
 
         if (!municipioRepository.existsById(form.munNrId()))
             throw new RuntimeException("Municipio não econtrado cadastrado");
 
-        var usuario = salvarUsuario(form, PerfilEnum.EMPRESA);
+        var usuario = salvarUsuario(form, PerfilEnum.EMPRESA, empNrId);
 
         var empresaEntidade = EmpresaEntidade
                 .builder()
@@ -73,13 +74,13 @@ public class AuthenticateServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public void salvarProfissional(UsuarioRegistroForm form) {
+    public void salvarProfissional(UsuarioRegistroForm form, Long proNrId) {
 
-        if (profissionalRepository.existsByProTxCpfOrProTxCelular(form.proTxCpf(), form.proTxCelular(), form.usuNrId())){
+        if (profissionalRepository.existsByProTxCpfOrProTxCelular(form.proTxCpf(), form.proTxCelular(), proNrId)){
             throw new RuntimeException("Já existe um profissional com esse CPF ou Celular cadastrado");
         }
 
-        if (!equipeReposity.existsById(form.eqNrId())){
+        if (!equipeReposity.existsById(form.eqiNrId())){
             throw new RuntimeException("Equipe não encontrada");
         }
 
@@ -89,30 +90,30 @@ public class AuthenticateServiceImpl implements AuthenticationService {
         if (celularFormatado.length()<11)
             throw new RuntimeException("Celular inválido");
 
-        var usuario = salvarUsuario(form, PerfilEnum.EMPRESA);
+        var usuario = salvarUsuario(form, PerfilEnum.EMPRESA, proNrId);
 
         ProfissionalEntidade profissional = new ProfissionalEntidade();
 
         profissional.setProNrId(usuario.getUsuNrId());
-        profissional.setProTxCpf(form.proTxCpf());
+        profissional.setProTxCpf(cpfFormatado);
         profissional.setProTxCelular(form.proTxCelular());
-        profissional.setEqiNrId(form.eqNrId());
+        profissional.setEqiNrId(form.eqiNrId());
         profissionalRepository.save(profissional);
     }
 
-    private UsuarioEntidade salvarUsuario(UsuarioRegistroForm form, PerfilEnum perTxNome) {
+    private UsuarioEntidade salvarUsuario(UsuarioRegistroForm form, PerfilEnum perTxNome, Long usuNrId) {
 
-        if (form.usuNrId() == null && this.usuarioRepository.findByUsuTxEmail(form.usuTxEmail()) != null) {
+        if (usuNrId == null && this.usuarioRepository.findByUsuTxEmail(form.usuTxEmail()) != null) {
             throw new RuntimeException();
         }
 
         var perfil = perfilRepository.findByPerfilUsuario(perTxNome)
                 .orElseThrow();
 
-        String encryptedPassword = new BCryptPasswordEncoder().encode(form.usuTxSenha());
+        String encryptedPassword = new BCryptPasswordEncoder().encode(form.usuTxSenha() == null? UUID.randomUUID().toString() :form.usuTxSenha());
 
-        var usuario = form.usuNrId() != null ?
-                usuarioRepository.findById(form.usuNrId())
+        var usuario = usuNrId != null ?
+                usuarioRepository.findById(usuNrId)
                         .orElseThrow(() -> new RuntimeException("Usuário não encontrado"))
                 : UsuarioEntidade.
                 builder()
@@ -124,7 +125,11 @@ public class AuthenticateServiceImpl implements AuthenticationService {
         usuario.setUsuTxSenha(encryptedPassword);
         usuarioRepository.save(usuario);
         var token = tokenService.gerarTokenTemporario(usuario);
-                emailService.sendMail(usuario.getUsuTxEmail(), usuario.getUsername(), token);
+
+        if (usuNrId == null) {
+            emailService.sendMail(usuario.getUsuTxEmail(), usuario.getUsername(), encryptedPassword, token);
+        }
+
         return usuario;
     }
 

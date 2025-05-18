@@ -28,7 +28,7 @@ public class MailService {
     }
 
     @Async
-    public void sendMail(String email, String fullName, String tokentemporario){
+    public void sendMail(String email, String fullName, String senhaTemporaria, String tokentemporario){
 
        try {
 
@@ -46,7 +46,7 @@ public class MailService {
 
            context.setVariable("fullName", fullName);
            context.setVariable("urlConfirmation", urlConfirmation);
-
+           context.setVariable("senhaTemporaria", senhaTemporaria);
 
            final String htmlContent= this.templateEngine.process("email", context);
 

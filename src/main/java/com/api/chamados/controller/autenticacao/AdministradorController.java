@@ -9,10 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -24,10 +21,21 @@ public class AdministradorController {
 
     @PostMapping("registrar-profissional")
     public ResponseEntity<ResponseDto<Void>> registrarProfissional(@RequestBody @Validated({ProfissionalGroup.class, Default.class}) UsuarioRegistroForm form){
-        authenticationService.salvarProfissional(form);
+        authenticationService.salvarProfissional(form,null);
         return  ResponseDto.<Void>builder()
                 .status(HttpStatus.CREATED)
                 .build();
     }
+
+    @PutMapping("atualizar-profissional/{proNrId}")
+    public ResponseEntity<ResponseDto<Void>> registrarProfissional(@RequestBody @Validated({ProfissionalGroup.class, Default.class}) UsuarioRegistroForm form,
+                                                                   @PathVariable long proNrId){
+        authenticationService.salvarProfissional(form,proNrId);
+        return  ResponseDto.<Void>builder()
+                .status(HttpStatus.CREATED)
+                .build();
+    }
+
+
 
 }
