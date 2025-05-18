@@ -1,12 +1,12 @@
 package com.api.chamados.controller.autenticacao;
 
 import com.api.chamados.config.handler.ResponseDto;
-import com.api.chamados.model.autenticacao.enums.PerfilEnum;
 import com.api.chamados.service.autenticacao.authenticate.AuthenticationService;
 import com.api.chamados.service.autenticacao.authenticate.dto.AuthDto;
-import com.api.chamados.service.autenticacao.usuario.form.EmpresaGroup;
-import com.api.chamados.service.autenticacao.usuario.form.UsuarioLoginForm;
-import com.api.chamados.service.autenticacao.usuario.form.UsuarioRegistroForm;
+import com.api.chamados.service.autenticacao.authenticate.form.EmpresaGroup;
+import com.api.chamados.service.autenticacao.authenticate.form.ProfissionalGroup;
+import com.api.chamados.service.autenticacao.authenticate.form.UsuarioLoginForm;
+import com.api.chamados.service.autenticacao.authenticate.form.UsuarioRegistroForm;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
@@ -24,10 +24,10 @@ public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
 
-    @PostMapping("/registrar-empresa")
+    @PostMapping("registrar-empresa")
     @Operation(summary = "Cadastro de empresa", description = "Endpoint responsável por cadastrar uma empresa.")
     @ApiResponse(responseCode = "201", description = "CREATED")
-    public ResponseEntity<ResponseDto<Void>> registrarUsuario(@RequestBody @Validated({EmpresaGroup.class, Default.class}) UsuarioRegistroForm form){
+    public ResponseEntity<ResponseDto<Void>> registrarEmpresa(@RequestBody @Validated({EmpresaGroup.class, Default.class}) UsuarioRegistroForm form){
         authenticationService.salvarEmpresa(form);
         return  ResponseDto.<Void>builder()
                 .status(HttpStatus.CREATED)

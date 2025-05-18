@@ -20,13 +20,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("v1")
+@RequestMapping("v1/chamados")
 @RequiredArgsConstructor
 public class ChamadoController {
 
     private final ChamadoService chamadoService;
 
-    @PostMapping("chamados")
+    @PostMapping()
     @Operation(summary = "Cadastro de chamado", description = "Endpoint responsável por cadastrar um chamado.")
     @ApiResponse(responseCode = "201", description = "CREATED")
     public ResponseEntity<ResponseDto<Void>> registrarChamado(@RequestBody @Valid ChamadoForm form){
@@ -36,7 +36,7 @@ public class ChamadoController {
                 .build();
     }
 
-    @PutMapping("chamados/{chaNrId}")
+    @PutMapping("{chaNrId}")
     @Operation(summary = "Atualização de chamado", description = "Endpoint responsável por atualizar um chamado.")
     @ApiResponse(responseCode = "204", description = "NO-CONTENT")
     public ResponseEntity<ResponseDto<Void>> atualizarChamado(@PathVariable long chaNrId,
@@ -49,7 +49,7 @@ public class ChamadoController {
 
     @Operation(summary = "Listar chamados", description = "Serviços responsável por listar chamados.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ChamadoDto.class)))
-    @GetMapping("/chamados")
+    @GetMapping()
     public ResponseEntity<ResponseDto<Page<ChamadoDto>>> listarChamado(
             @ParameterObject ChamadoFiltroForm filtro,
             @PageableDefault(size = Integer.MAX_VALUE) Pageable pageable) {
@@ -59,6 +59,20 @@ public class ChamadoController {
         return ResponseDto.<Page<ChamadoDto>>builder()
                 .status(HttpStatus.OK)
                 .response(chamados)
+                .build();
+    }
+
+
+
+    @GetMapping({"{chaNrId}"})
+    public ResponseEntity<ResponseDto<ChamadoDto>> buscarChamadoPorId(
+            @PathVariable long chaNrId) {
+
+        var chamado = chamadoService.buscarChamadoPorId(chaNrId);
+
+        return ResponseDto.<ChamadoDto>builder()
+                .status(HttpStatus.OK)
+                .response(chamado)
                 .build();
     }
 }

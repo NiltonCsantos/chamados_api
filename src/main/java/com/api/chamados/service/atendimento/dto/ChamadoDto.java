@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 public record ChamadoDto(
+        Long chaNrId,
         String chaTxDescricao,
         Long eqiNrId,
         String chaTxTitulo,
@@ -18,6 +19,7 @@ public record ChamadoDto(
     public static ChamadoDto of(ChamadoEntidade entidade) {
         if (entidade == null) return null;
         return new ChamadoDto(
+                entidade.getChaNrId(),
                 entidade.getChaTxDescricao(),
                 entidade.getEqiNrId(),
                 entidade.getChaTxTitulo(),

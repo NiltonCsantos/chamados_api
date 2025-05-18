@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Document</title>
+</head>
+<body>
+
+<div class="container" style="background: #EE6928;
+
+            color: #ffffff;">
+
+    <header style=" padding: 2rem;
+
+           text-align: center;
+">
+        <h1>
+            Feira conectada
+        </h1>
+
+        <div>
+            <h2> SEJA BEM VINDO</h2>
+        </div>
+
+    </header>
+
+    <main style=" display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;">
+        <div style="
+            text-align: center;">
+            <h2>Olá, <span th:text="${fullName}">Nome Usuário</span>!</h2>
+
+            <br>
+
+            <h4>Ficamos muito felizes de ter você conosco</h4>
+
+            <a th:href="${urlConfirmation}" rel="external" target="_blank">Clique aqui</a> para confirmar seu cadastro
+            <p>Caso o botão não funcione, clique no link abaixo</p>
+            <span th:text="${urlConfirmation}">Nome Usuário</span>
+
+        </div>
+
+        <div  style="      text-align: center;">
+
+            <p>
+                Estamos felizes em ter você aqui. Descubra o melhor das feiras agora no seu celular!
+                Encontre frutas frescas, produtos artesanais e mais,
+                tudo de forma fácil e rápida. Conecte-se à tradição das feiras de um jeito moderno.
+                Vamos explorar juntos!
+            </p>
+
+
+        </div>
+    </main>
+
+
+        <footer style="
+         background: #756B66;
+         padding: 1rem 0rem;
+
+         ">
+            <div style="
+            text-align: center;">
+                <h3>
+                    Feira Conectada
+                </h3>
+            </div>
+            <div style="
+            text-align: center;">
+                <p >
+                    Juntos, iremos conectar você aos encantos escondidos da sua feira local,
+                    promovendo uma jornada de descobertas que ultrapassa os limites da tela.
+
+
+                </p>
+            </div>
+        </footer>
+
+
+
+</div>
+
+</body>
+</html>

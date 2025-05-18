@@ -5,17 +5,22 @@ import com.api.chamados.model.autenticacao.CustomUserDetails;
 import com.api.chamados.model.autenticacao.UsuarioEntidade;
 import com.api.chamados.model.autenticacao.enums.PerfilEnum;
 import com.api.chamados.model.atendimento.EmpresaEntidade;
+import com.api.chamados.model.suporte.ProfissionalEntidade;
 import com.api.chamados.repository.autenticacao.PerfilRepository;
 import com.api.chamados.repository.autenticacao.UsuarioRepository;
 import com.api.chamados.repository.endereco.MunicipioRepository;
-import com.api.chamados.repository.suporte.EmpresaRepository;
+import com.api.chamados.repository.atendimento.EmpresaRepository;
+import com.api.chamados.repository.suporte.EquipeReposity;
+import com.api.chamados.repository.suporte.ProfissionalRepository;
 import com.api.chamados.service.autenticacao.authenticate.AuthenticationService;
 import com.api.chamados.service.autenticacao.authenticate.UserDetailsServiceImpl;
 import com.api.chamados.service.autenticacao.authenticate.dto.AuthDto;
 import com.api.chamados.service.autenticacao.authenticate.dto.InformacaoUsuarioDto;
 import com.api.chamados.service.autenticacao.token.TokenService;
-import com.api.chamados.service.autenticacao.usuario.form.UsuarioLoginForm;
-import com.api.chamados.service.autenticacao.usuario.form.UsuarioRegistroForm;
+import com.api.chamados.service.autenticacao.authenticate.form.UsuarioLoginForm;
+import com.api.chamados.service.autenticacao.authenticate.form.UsuarioRegistroForm;
+import com.api.chamados.service.mail.MailService;
+import com.api.chamados.utils.Regex;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -38,7 +43,9 @@ public class AuthenticateServiceImpl implements AuthenticationService {
     private final UserDetailsServiceImpl authorizationService;
     private final EmpresaRepository empresaRepository;
     private final MunicipioRepository municipioRepository;
-//   private final MailService emailService;
+    private final ProfissionalRepository profissionalRepository;
+    private final EquipeReposity equipeReposity;
+   private final MailService emailService;
 
 
     @Override
@@ -66,7 +73,31 @@ public class AuthenticateServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public void salvarUsuario(UsuarioRegistroForm form) {
+    public void salvarProfissional(UsuarioRegistroForm form) {
+
+        if (profissionalRepository.existsByProTxCpfOrProTxCelular(form.proTxCpf(), form.proTxCelular(), form.usuNrId())){
+            throw new RuntimeException("Já existe um profissional com esse CPF ou Celular cadastrado");
+        }
+
+        if (!equipeReposity.existsById(form.eqNrId())){
+            throw new RuntimeException("Equipe não encontrada");
+        }
+
+        var celularFormatado = Regex.apenasNumeros(form.proTxCelular());
+        var cpfFormatado = Regex.apenasNumeros(form.proTxCpf());
+
+        if (celularFormatado.length()<11)
+            throw new RuntimeException("Celular inválido");
+
+        var usuario = salvarUsuario(form, PerfilEnum.EMPRESA);
+
+        ProfissionalEntidade profissional = new ProfissionalEntidade();
+
+        profissional.setProNrId(usuario.getUsuNrId());
+        profissional.setProTxCpf(form.proTxCpf());
+        profissional.setProTxCelular(form.proTxCelular());
+        profissional.setEqiNrId(form.eqNrId());
+        profissionalRepository.save(profissional);
     }
 
     private UsuarioEntidade salvarUsuario(UsuarioRegistroForm form, PerfilEnum perTxNome) {
@@ -93,7 +124,7 @@ public class AuthenticateServiceImpl implements AuthenticationService {
         usuario.setUsuTxSenha(encryptedPassword);
         usuarioRepository.save(usuario);
         var token = tokenService.gerarTokenTemporario(usuario);
-//                emailService.sendMail(usuario.getUsuTxEmail(), usuario.getUsername(), token);
+                emailService.sendMail(usuario.getUsuTxEmail(), usuario.getUsername(), token);
         return usuario;
     }
 

@@ -15,8 +15,7 @@ public interface ChamadoRepository extends JpaRepository<ChamadoEntidade, Long> 
                     select
                     	cha.*
                     from atendimento.cha_chamado cha
-                    where                        
-                         (:#{#filtro.chaTxTitulo()==null} or cha.cha_tx_ultimo_status like concat(coalesce(:#{#filtro.chaTxTitulo()?.name()}, ''), '%'))
+                    where (:#{#filtro.chaTxTitulo()==null} or upper(cha.cha_tx_titulo) like upper(concat(coalesce(:#{#filtro.chaTxTitulo()}, ''), '%')))
                           and (:#{#filtro.chaTxStatus() == null } or cha.cha_tx_titulo = :#{#filtro?.chaTxStatus()?.name()})
                           and (:#{#filtro.eqiNrId() == null } or cha.eqi_nr_id = :#{#filtro?.eqiNrId()})    
                     """)

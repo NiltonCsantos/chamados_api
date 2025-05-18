@@ -1,4 +1,4 @@
-package com.api.chamados.service.autenticacao.usuario.form;
+package com.api.chamados.service.autenticacao.authenticate.form;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
