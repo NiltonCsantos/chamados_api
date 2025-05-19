@@ -1,5 +1,6 @@
 package com.api.chamados.service.atendimento.imp;
 
+import com.api.chamados.config.exceptions.NotFoundException;
 import com.api.chamados.model.atendimento.ChamadoEntidade;
 import com.api.chamados.model.atendimento.HistoricoChamadoEntidade;
 import com.api.chamados.model.atendimento.enums.StatusChamadoEnum;
@@ -36,7 +37,7 @@ public class ChamadoServiceImpl extends BaseServiceImpl implements ChamadoServic
     @Override
     public ChamadoDto buscarChamadoPorId(Long chaNrId) {
         var chamado = chamadoRepository.findById(chaNrId)
-                .orElseThrow(() -> new RuntimeException("Não foi possível localizar chamdo"));
+                .orElseThrow(() -> new NotFoundException("Não foi possível localizar chamdo"));
         return ChamadoDto.of(chamado);
     }
 
@@ -48,10 +49,10 @@ public class ChamadoServiceImpl extends BaseServiceImpl implements ChamadoServic
 
         ChamadoEntidade chamado = chaNrId != null ?
                 chamadoRepository.findById(chaNrId)
-                        .orElseThrow(() -> new RuntimeException("Chamado não encontrado")) : new ChamadoEntidade();
+                        .orElseThrow(() -> new NotFoundException("Chamado não encontrado")) : new ChamadoEntidade();
 
         if (!equipeReposity.existsById(form.eqiNrId())){
-            throw new RuntimeException("Equipe não encontrado");
+            throw new NotFoundException("Equipe não encontrado");
         }
 
         chamado.setChaTxUltimoStatus(chamado.getChaNrId() != null ? StatusChamadoEnum.ALTERADO : StatusChamadoEnum.ABERTO);

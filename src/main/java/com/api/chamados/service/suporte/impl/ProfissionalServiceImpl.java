@@ -1,5 +1,7 @@
 package com.api.chamados.service.suporte.impl;
 
+import com.api.chamados.config.exceptions.BadRaquestException;
+import com.api.chamados.config.exceptions.NotFoundException;
 import com.api.chamados.repository.autenticacao.UsuarioRepository;
 import com.api.chamados.repository.suporte.ProfissionalRepository;
 import com.api.chamados.service.suporte.ProfissionalService;
@@ -20,7 +22,7 @@ public class ProfissionalServiceImpl implements ProfissionalService {
     @Override
     public ProfissionalDto buscarProfissionalPorId(Long proNrId) {
         return profissionalRepository.findProfissionalById(proNrId)
-                .orElseThrow(() -> new RuntimeException("Não foi possível localizar profisisonal"));
+                .orElseThrow(() -> new NotFoundException("Não foi possível localizar profisisonal"));
     }
 
     @Override
@@ -31,11 +33,11 @@ public class ProfissionalServiceImpl implements ProfissionalService {
     @Override
     public void ativarDesativarProfissional(Long proNrId) {
         if (profissionalRepository.existsByChaAtivo(proNrId))
-            throw new RuntimeException("Não foi possível desativar o profisisonal, pois ele possui um ou mais chamados ativos");
+            throw new BadRaquestException("Não foi possível desativar o profisisonal, pois ele possui um ou mais chamados ativos");
 
         var usuarioEntidade = usuarioRepository
                 .findById(proNrId)
-                .orElseThrow(() -> new RuntimeException("Não foi possível localizar profisisonal"));
+                .orElseThrow(() -> new NotFoundException("Não foi possível localizar profisisonal"));
 
         usuarioEntidade.setUsublAtivo(!usuarioEntidade.isUsublAtivo());
         usuarioRepository.save(usuarioEntidade);
