@@ -1,6 +1,7 @@
 package com.api.chamados.service.suporte.impl;
 
-import com.api.chamados.config.exceptions.BadRaquestException;
+
+import com.api.chamados.config.exceptions.BadRequestException;
 import com.api.chamados.config.exceptions.NotFoundException;
 import com.api.chamados.repository.autenticacao.UsuarioRepository;
 import com.api.chamados.repository.suporte.ProfissionalRepository;
@@ -33,7 +34,7 @@ public class ProfissionalServiceImpl implements ProfissionalService {
     @Override
     public void ativarDesativarProfissional(Long proNrId) {
         if (profissionalRepository.existsByChaAtivo(proNrId))
-            throw new BadRaquestException("Não foi possível desativar o profisisonal, pois ele possui um ou mais chamados ativos");
+            throw new BadRequestException("Não foi possível desativar o profisisonal, pois ele possui um ou mais chamados ativos");
 
         var usuarioEntidade = usuarioRepository
                 .findById(proNrId)

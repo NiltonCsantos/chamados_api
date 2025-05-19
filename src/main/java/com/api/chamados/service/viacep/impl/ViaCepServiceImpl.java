@@ -1,6 +1,6 @@
 package com.api.chamados.service.viacep.impl;
 
-import com.api.chamados.config.exceptions.BadRaquestException;
+import com.api.chamados.config.exceptions.BadRequestException;
 import com.api.chamados.config.exceptions.NotFoundException;
 import com.api.chamados.model.endereco.EstadoEntidade;
 import com.api.chamados.model.endereco.MunicipioEntidade;
@@ -74,7 +74,7 @@ public class ViaCepServiceImpl implements ViaCepService {
 
             return ConsultaCepDto.of(viaCepDto, munNrId, estNrId);
         } catch (FeignException.FeignServerException | FeignException.FeignClientException e) {
-            throw new BadRaquestException("Cep inválido");
+            throw new BadRequestException("Cep inválido");
         }
     }
 }
