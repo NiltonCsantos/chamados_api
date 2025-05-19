@@ -7,7 +7,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication
 @EnableFeignClients
-@EnableAsync
+//@EnableAsync
 public class ChamadosApplication {
 
 	public static void main(String[] args) {

@@ -1,6 +1,8 @@
 package com.api.chamados.service.autenticacao.authenticate.impl;
 
 
+import com.api.chamados.config.exceptions.BadRaquestException;
+import com.api.chamados.config.exceptions.NotFoundException;
 import com.api.chamados.model.autenticacao.CustomUserDetails;
 import com.api.chamados.model.autenticacao.UsuarioEntidade;
 import com.api.chamados.model.autenticacao.enums.PerfilEnum;
@@ -53,11 +55,11 @@ public class AuthenticateServiceImpl implements AuthenticationService {
     public void salvarEmpresa(UsuarioRegistroForm form, Long empNrId) {
 
         if (empNrId == null && empresaRepository.existsByEmpTxCnpj(form.empTxCnpj())) {
-            throw new RuntimeException("Empresa já cadastrada");
+            throw new BadRaquestException("Empresa já cadastrada");
         }
 
         if (!municipioRepository.existsById(form.munNrId()))
-            throw new RuntimeException("Municipio não econtrado cadastrado");
+            throw new NotFoundException("Municipio não econtrado cadastrado");
 
         var usuario = salvarUsuario(form, PerfilEnum.EMPRESA, empNrId);
 
@@ -77,18 +79,18 @@ public class AuthenticateServiceImpl implements AuthenticationService {
     public void salvarProfissional(UsuarioRegistroForm form, Long proNrId) {
 
         if (profissionalRepository.existsByProTxCpfOrProTxCelular(form.proTxCpf(), form.proTxCelular(), proNrId)){
-            throw new RuntimeException("Já existe um profissional com esse CPF ou Celular cadastrado");
+            throw new BadRaquestException("Já existe um profissional com esse CPF ou Celular cadastrado");
         }
 
         if (!equipeReposity.existsById(form.eqiNrId())){
-            throw new RuntimeException("Equipe não encontrada");
+            throw new NotFoundException("Equipe não encontrada");
         }
 
         var celularFormatado = Regex.apenasNumeros(form.proTxCelular());
         var cpfFormatado = Regex.apenasNumeros(form.proTxCpf());
 
         if (celularFormatado.length()<11)
-            throw new RuntimeException("Celular inválido");
+            throw new BadRaquestException("Celular inválido");
 
         var usuario = salvarUsuario(form, PerfilEnum.EMPRESA, proNrId);
 
@@ -104,7 +106,7 @@ public class AuthenticateServiceImpl implements AuthenticationService {
     private UsuarioEntidade salvarUsuario(UsuarioRegistroForm form, PerfilEnum perTxNome, Long usuNrId) {
 
         if (usuNrId == null && this.usuarioRepository.findByUsuTxEmail(form.usuTxEmail()) != null) {
-            throw new RuntimeException();
+            throw new BadRaquestException("Email já cadastrado");
         }
 
         var perfil = perfilRepository.findByPerfilUsuario(perTxNome)
@@ -114,7 +116,7 @@ public class AuthenticateServiceImpl implements AuthenticationService {
 
         var usuario = usuNrId != null ?
                 usuarioRepository.findById(usuNrId)
-                        .orElseThrow(() -> new RuntimeException("Usuário não encontrado"))
+                        .orElseThrow(() -> new NotFoundException("Usuário não encontrado"))
                 : UsuarioEntidade.
                 builder()
                 .perfil(perfil)
@@ -137,7 +139,7 @@ public class AuthenticateServiceImpl implements AuthenticationService {
     public AuthDto fazerLogin(UsuarioLoginForm form) {
 
         if (authorizationService.loadUserByUsername(form.usuTxEmail()) == null) {
-            throw new RuntimeException("Usuário não encontrado");
+            throw new NotFoundException("Usuário não encontrado");
         }
 
         UsernamePasswordAuthenticationToken passwordAuthenticationToken = new UsernamePasswordAuthenticationToken(
@@ -161,7 +163,7 @@ public class AuthenticateServiceImpl implements AuthenticationService {
         CustomUserDetails user = usuarioRepository.findByUsuTxEmail(email);
 
         if (user == null) {
-            throw new RuntimeException("Ocorreu um erro ao buscar o usuário");
+            throw new BadRaquestException("Ocorreu um erro ao buscar o usuário");
         }
 
 

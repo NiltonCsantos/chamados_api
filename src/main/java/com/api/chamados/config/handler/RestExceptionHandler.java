@@ -1,13 +1,11 @@
 package com.api.chamados.config.handler;
 
+import com.api.chamados.config.exceptions.BadRaquestException;
+import com.api.chamados.exceptions.BadRequestException;
 import com.api.chamados.exceptions.NotFoundException;
-import com.api.chamados.exceptions.QuantidadeDeProdutosInsuficenteException;
-import com.api.chamados.exceptions.RegistredUserException;
 import jakarta.servlet.http.HttpServletRequest;
-import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -30,18 +28,19 @@ public class RestExceptionHandler {
     private final Logger logger = LoggerFactory.getLogger(RestExceptionHandler.class);
 
     @ExceptionHandler(NotFoundException.class)
-    private ResponseEntity<RestErrorMessage> usuarionaoEncontrado(NotFoundException notFoundException, HttpServletRequest request, Locale locale){
+    private ResponseEntity<RestErrorMessage> recursoNaoEncontradoException(NotFoundException notFoundException, HttpServletRequest request, Locale locale){
         logger.error(notFoundException.getMessage(), notFoundException);
         final RestErrorMessage message= gerarRestErrorMessageDinamico(HttpStatus.NOT_FOUND, notFoundException, request, locale);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
     }
 
-    @ExceptionHandler(RegistredUserException.class)
-    private ResponseEntity<RestErrorMessage> registredException(RegistredUserException exception, HttpServletRequest request, Locale locale){
+    @ExceptionHandler(BadRequestException.class)
+    private ResponseEntity<RestErrorMessage> violocaoDeRegraException(BadRaquestException exception, HttpServletRequest request, Locale locale){
         logger.error(exception.getMessage(), exception);
         final RestErrorMessage message= gerarRestErrorMessageDinamico(HttpStatus.BAD_REQUEST, exception, request, locale);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
     }
+
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     private ResponseEntity<RestErrorMessage> handleRequerUmCorpo(HttpMessageNotReadableException ex, HttpServletRequest request, Locale locale){
@@ -116,25 +115,6 @@ public class RestExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
     }
 
-
-//    @ExceptionHandler(ConflictException.class)
-//    public ResponseEntity<RestErrorMessage> handleAuthException(ConflictException ex, HttpServletRequest request, Locale locale) {
-//
-//        logger.error(ex.getMessage(), ex);
-//
-//        var message = this.gerarRestErrorMessageDinamico(HttpStatus.CONFLICT, ex, request, locale);
-//        return ResponseEntity.status(HttpStatus.CONFLICT).body(message);
-//    }
-
-
-    @ExceptionHandler(QuantidadeDeProdutosInsuficenteException.class)
-    public ResponseEntity<RestErrorMessage> handleRegistredException (QuantidadeDeProdutosInsuficenteException ex, HttpServletRequest request, Locale locale) {
-
-        logger.error(ex.getMessage(), ex);
-
-        var message = this.gerarRestErrorMessageDinamico(HttpStatus.CONFLICT, ex, request, locale);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
-    }
 
     private List<ValidateExceptionResponse.Field> processarErros(List<FieldError> fieldErrors) {
         return fieldErrors.stream()
