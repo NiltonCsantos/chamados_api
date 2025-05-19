@@ -1,9 +1,9 @@
 package com.api.chamados.config.handler;
 
 import com.api.chamados.config.exceptions.BadRaquestException;
-import com.api.chamados.exceptions.BadRequestException;
-import com.api.chamados.exceptions.NotFoundException;
+import com.api.chamados.config.exceptions.NotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.coyote.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -15,6 +15,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.sql.SQLException;
@@ -22,7 +23,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Locale;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class RestExceptionHandler {
 
     private final Logger logger = LoggerFactory.getLogger(RestExceptionHandler.class);
@@ -35,7 +36,7 @@ public class RestExceptionHandler {
     }
 
     @ExceptionHandler(BadRequestException.class)
-    private ResponseEntity<RestErrorMessage> violocaoDeRegraException(BadRaquestException exception, HttpServletRequest request, Locale locale){
+    private ResponseEntity<RestErrorMessage> violocaoDeRegraException(BadRequestException exception, HttpServletRequest request, Locale locale){
         logger.error(exception.getMessage(), exception);
         final RestErrorMessage message= gerarRestErrorMessageDinamico(HttpStatus.BAD_REQUEST, exception, request, locale);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
@@ -85,14 +86,6 @@ public class RestExceptionHandler {
         logger.error(ex.getMessage(), ex);
         var message = this.gerarRestErrorMessageDinamico(HttpStatus.BAD_REQUEST, ex, request, locale);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
-    }
-    @ExceptionHandler(SQLException.class)
-    public ResponseEntity<RestErrorMessage> handlePSQLException(SQLException ex, HttpServletRequest request, Locale locale) {
-
-        logger.error(ex.getMessage(), ex);
-
-        var message = this.gerarRestErrorMessageErroInterno( ex, request, locale);
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(message);
     }
 
     @ExceptionHandler(DisabledException.class)
@@ -147,12 +140,12 @@ public class RestExceptionHandler {
                 .build();
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<RestErrorMessage> handleGlobalException(Exception ex, HttpServletRequest request, Locale locale) {
-        logger.error(ex.getMessage(), ex);
-        var message = gerarRestErrorMessageErroInterno(ex, request, locale);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(message);
-    }
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<RestErrorMessage> handleGlobalException(Exception ex, HttpServletRequest request, Locale locale) {
+//        logger.error(ex.getMessage(), ex);
+//        var message = gerarRestErrorMessageErroInterno(ex, request, locale);
+//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(message);
+//    }
 
     private String extrairDadoUnico(String message) {
         String[] parts = message.split("Detalhe: Chave .*?=\\(");

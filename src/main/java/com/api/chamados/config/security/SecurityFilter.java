@@ -1,6 +1,5 @@
 package com.api.chamados.config.security;
 
-import com.api.chamados.exceptions.AuthException;
 import com.api.chamados.service.autenticacao.token.TokenService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -45,14 +44,14 @@ public class SecurityFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }catch (ExpiredJwtException e){
 
-                AuthException exception= new AuthException("Token expirado", e);
-                customAuthenticationEntryPoint.commence(request, response, exception);
+//                AuthException exception= new AuthException("Token expirado", e);
+//                customAuthenticationEntryPoint.commence(request, response, exception);
 
                 return;
             }catch (MalformedJwtException e){
 
-                AuthException exception= new AuthException("Token mal formado", e);
-                customAuthenticationEntryPoint.commence(request, response, exception);
+//                AuthException exception= new AuthException("Token mal formado", e);
+//                customAuthenticationEntryPoint.commence(request, response, exception);
 
                 SecurityContextHolder.clearContext();
                 return;

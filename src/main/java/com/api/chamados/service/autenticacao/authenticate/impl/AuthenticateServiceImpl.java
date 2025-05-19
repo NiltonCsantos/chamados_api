@@ -79,7 +79,7 @@ public class AuthenticateServiceImpl implements AuthenticationService {
     public void salvarProfissional(UsuarioRegistroForm form, Long proNrId) {
 
         if (profissionalRepository.existsByProTxCpfOrProTxCelular(form.proTxCpf(), form.proTxCelular(), proNrId)){
-            throw new BadRaquestException("Já existe um profissional com esse CPF ou Celular cadastrado");
+            throw new NotFoundException("Já existe um profissional com esse CPF ou Celular cadastrado");
         }
 
         if (!equipeReposity.existsById(form.eqiNrId())){
