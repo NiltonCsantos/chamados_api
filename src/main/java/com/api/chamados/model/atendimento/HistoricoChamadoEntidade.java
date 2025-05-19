@@ -19,15 +19,15 @@ public class HistoricoChamadoEntidade {
     @Column(name = "hic_nr_id")
     private Long hicNrId;
 
-    @Column(name = "drh_tx_justificativa")
-    private String drhTxJustificativa;
-    @Column(name = "drh_dt_atualizacao")
-    private LocalDateTime chaDtAtualizacao;
+    @Column(name = "hic_tx_justificativa")
+    private String hicTxJustificativa;
+    @Column(name = "hic_dt_atualizacao")
+    private LocalDateTime hicDtAtualizacao;
     @Column(name = "hic_tx_status")
     @Enumerated(EnumType.STRING)
     private StatusChamadoEnum hicTxStatus;
     @Column(name = "cha_nr_id")
     private Long chaNrId;
-    @Column(name = "usu_nr_id")
-    private Long usuNrId;
+    @Column(name = "pro_nr_id")
+    private Long proNrId;
 }

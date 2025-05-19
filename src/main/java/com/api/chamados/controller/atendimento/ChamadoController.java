@@ -3,6 +3,8 @@ package com.api.chamados.controller.atendimento;
 import com.api.chamados.config.handler.ResponseDto;
 import com.api.chamados.service.atendimento.ChamadoService;
 import com.api.chamados.service.atendimento.dto.ChamadoDto;
+import com.api.chamados.service.atendimento.dto.ChamdoComHistoricoDto;
+import com.api.chamados.service.atendimento.dto.QuantidadeChamadosDto;
 import com.api.chamados.service.atendimento.form.ChamadoFiltroForm;
 import com.api.chamados.service.atendimento.form.ChamadoForm;
 import io.swagger.v3.oas.annotations.Operation;
@@ -73,6 +75,28 @@ public class ChamadoController {
         return ResponseDto.<ChamadoDto>builder()
                 .status(HttpStatus.OK)
                 .response(chamado)
+                .build();
+    }
+
+    @GetMapping("/historico/{chaNrId}")
+    public ResponseEntity<ResponseDto<ChamdoComHistoricoDto>> buscarChamadoComHistoricoPorId(
+            @PathVariable long chaNrId) {
+        var chamado = chamadoService.buscarChamadoComHistoricoPorId(chaNrId);
+
+        return ResponseDto.<ChamdoComHistoricoDto>builder()
+                .status(HttpStatus.OK)
+                .response(chamado)
+                .build();
+    }
+
+    @GetMapping("/contar")
+    public ResponseEntity<ResponseDto<QuantidadeChamadosDto>> contarChamados(
+            @RequestParam(required = false) Long munNrId) {
+        var quantidadeChamadp = chamadoService.quantidadeChamadosPorStatus(munNrId);
+
+        return ResponseDto.<QuantidadeChamadosDto>builder()
+                .status(HttpStatus.OK)
+                .response(quantidadeChamadp)
                 .build();
     }
 }
