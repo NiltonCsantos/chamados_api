@@ -1,5 +1,6 @@
 package com.api.chamados.service.base.impl;
 
+import com.api.chamados.config.exceptions.NotFoundException;
 import com.api.chamados.model.autenticacao.UsuarioEntidade;
 import com.api.chamados.service.base.BaseService;
 import org.springframework.security.core.Authentication;
@@ -14,6 +15,6 @@ public class BaseServiceImpl implements BaseService {
         if (authentication != null && authentication.getPrincipal() instanceof UsuarioEntidade) {
             return (UsuarioEntidade) authentication.getPrincipal();
         }
-        throw new RuntimeException("Usuario não encontrado");
+        throw new NotFoundException("Usuario não encontrado");
     }
 }

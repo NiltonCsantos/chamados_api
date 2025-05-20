@@ -1,7 +1,9 @@
 package com.api.chamados.repository.suporte;
 
 import com.api.chamados.model.suporte.ProfissionalEntidade;
+import com.api.chamados.service.atendimento.dto.QuantidadeChamadoPorEquipe;
 import com.api.chamados.service.suporte.dto.ProfissionalDto;
+import com.api.chamados.service.suporte.dto.ProfissionalMaisChamadoDto;
 import com.api.chamados.service.suporte.form.ProfissionalFiltroForm;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -71,4 +73,27 @@ public interface ProfissionalRepository extends JpaRepository<ProfissionalEntida
                     and pro.pro_nr_id =:proNrId
                     """)
     boolean existsByChaAtivo(Long proNrId);
+
+    @Query(nativeQuery = true,
+            value = """  
+                   select
+                      usu.usu_tx_nome,
+                      usu.usu_nr_id,
+                      count(distinct cha.cha_nr_id) as TotalChamados
+                    from
+                      suporte.pro_profissional pro
+                    inner join
+                      atendimento.hic_historico_chamado hic
+                        on hic.pro_nr_id = pro.pro_nr_id
+                    inner join atendimento.cha_chamado cha on cha.cha_nr_id = hic.cha_nr_id
+                    inner join atendimento.emp_empresa em on em.emp_nr_id = cha.emp_nr_id
+                    inner join autenticacao.usu_usuario usu on usu.usu_nr_id = pro.pro_nr_id
+                    where :munNrId is null or em.mun_nr_id = :munNrId
+                    group by
+                      pro.pro_nr_id,
+                      usu.usu_nr_id
+                    order by
+                      TotalChamados desc
+                    """)
+    Page<ProfissionalMaisChamadoDto> findTopChamados(Pageable pageable, Long munNrId);
 }

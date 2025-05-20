@@ -2,16 +2,12 @@ package com.api.chamados.service.atendimento.imp;
 
 import com.api.chamados.config.exceptions.NotFoundException;
 import com.api.chamados.model.atendimento.ChamadoEntidade;
-import com.api.chamados.model.atendimento.HistoricoChamadoEntidade;
 import com.api.chamados.model.atendimento.enums.StatusChamadoEnum;
 import com.api.chamados.repository.atendimento.ChamadoRepository;
 import com.api.chamados.repository.atendimento.HistoricoChamadoRepository;
 import com.api.chamados.repository.suporte.EquipeReposity;
 import com.api.chamados.service.atendimento.ChamadoService;
-import com.api.chamados.service.atendimento.dto.ChamadoDto;
-import com.api.chamados.service.atendimento.dto.ChamadoDtoComHistorico;
-import com.api.chamados.service.atendimento.dto.ChamdoComHistoricoDto;
-import com.api.chamados.service.atendimento.dto.QuantidadeChamadosDto;
+import com.api.chamados.service.atendimento.dto.*;
 import com.api.chamados.service.atendimento.form.ChamadoFiltroForm;
 import com.api.chamados.service.atendimento.form.ChamadoForm;
 import com.api.chamados.service.base.impl.BaseServiceImpl;
@@ -22,7 +18,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -40,7 +35,7 @@ public class ChamadoServiceImpl extends BaseServiceImpl implements ChamadoServic
     @Override
     public ChamadoDto buscarChamadoPorId(Long chaNrId) {
         var chamado = chamadoRepository.findById(chaNrId)
-                .orElseThrow(() -> new RuntimeException("Não foi possível localizar chamdo"));
+                .orElseThrow(() -> new NotFoundException("Não foi possível localizar chamdo"));
         return ChamadoDto.of(chamado);
     }
 
@@ -52,10 +47,10 @@ public class ChamadoServiceImpl extends BaseServiceImpl implements ChamadoServic
 
         ChamadoEntidade chamado = chaNrId != null ?
                 chamadoRepository.findById(chaNrId)
-                        .orElseThrow(() -> new RuntimeException("Chamado não encontrado")) : new ChamadoEntidade();
+                        .orElseThrow(() -> new NotFoundException("Chamado não encontrado")) : new ChamadoEntidade();
 
         if (!equipeReposity.existsById(form.eqiNrId())){
-            throw new RuntimeException("Equipe não encontrado");
+            throw new NotFoundException("Equipe não encontrado");
         }
 
         chamado.setChaTxUltimoStatus(chamado.getChaNrId() != null ? StatusChamadoEnum.ALTERADO : StatusChamadoEnum.ABERTO);
@@ -86,5 +81,15 @@ public class ChamadoServiceImpl extends BaseServiceImpl implements ChamadoServic
     @Override
     public QuantidadeChamadosDto quantidadeChamadosPorStatus(Long munNrId) {
         return chamadoRepository.countChamadosPorStatus(munNrId);
+    }
+
+    @Override
+    public QuantidadeChamadoPorEquipe QuantidadeChamadoPorEquipe(Long munNrId) {
+        return chamadoRepository.findChamadosPorEquipe(munNrId);
+    }
+
+    @Override
+    public Page<QuantidadeChamadoMensalDto> getChamadosPorMes(Long munNrId, Pageable pageable) {
+        return chamadoRepository.findChamadosPorMes(pageable,munNrId);
     }
 }

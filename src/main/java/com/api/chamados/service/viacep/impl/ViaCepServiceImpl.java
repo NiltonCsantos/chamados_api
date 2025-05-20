@@ -1,5 +1,7 @@
 package com.api.chamados.service.viacep.impl;
 
+import com.api.chamados.config.exceptions.BadRequestException;
+import com.api.chamados.config.exceptions.NotFoundException;
 import com.api.chamados.model.endereco.EstadoEntidade;
 import com.api.chamados.model.endereco.MunicipioEntidade;
 import com.api.chamados.repository.endereco.EstadoRepository;
@@ -32,7 +34,7 @@ public class ViaCepServiceImpl implements ViaCepService {
         try {
             ViaCepDto viaCepDto = viaCepFeign.buscaEnderecoCep(cep);
             if (viaCepDto.uf() == null) {
-                throw new RuntimeException("Cep não encontrado");
+                throw new NotFoundException("Cep não encontrado");
             }
 
             final Long munNrId;
@@ -72,7 +74,7 @@ public class ViaCepServiceImpl implements ViaCepService {
 
             return ConsultaCepDto.of(viaCepDto, munNrId, estNrId);
         } catch (FeignException.FeignServerException | FeignException.FeignClientException e) {
-            throw new RuntimeException("Cep inválido");
+            throw new BadRequestException("Cep inválido");
         }
     }
 }

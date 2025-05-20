@@ -3,8 +3,12 @@ package com.api.chamados.controller.suporte;
 import com.api.chamados.config.handler.ResponseDto;
 import com.api.chamados.service.suporte.ProfissionalService;
 import com.api.chamados.service.suporte.dto.ProfissionalDto;
+import com.api.chamados.service.suporte.dto.ProfissionalMaisChamadoDto;
+import com.api.chamados.service.suporte.form.AtualizarChamadoForm;
 import com.api.chamados.service.suporte.form.ProfissionalFiltroForm;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,28 +27,48 @@ public class ProfissionalController {
 
     @GetMapping()
     public ResponseEntity<ResponseDto<Page<ProfissionalDto>>> listarProfissionais(@ParameterObject ProfissionalFiltroForm filtro,
-                                                                 @PageableDefault(size = Integer.MAX_VALUE) Pageable pageable){
-       var profissionais = profissionalService.listarProfissionais(pageable, filtro);
-        return  ResponseDto.<Page<ProfissionalDto>>builder()
+                                                                                  @PageableDefault(size = Integer.MAX_VALUE) Pageable pageable) {
+        var profissionais = profissionalService.listarProfissionais(pageable, filtro);
+        return ResponseDto.<Page<ProfissionalDto>>builder()
                 .response(profissionais)
                 .status(HttpStatus.CREATED)
                 .build();
     }
 
     @GetMapping("{proNrId}")
-    public ResponseEntity<ResponseDto<ProfissionalDto>> buscarPorId(@PathVariable long proNrId){
+    public ResponseEntity<ResponseDto<ProfissionalDto>> buscarPorId(@PathVariable long proNrId) {
         var profissional = profissionalService.buscarProfissionalPorId(proNrId);
-        return  ResponseDto.<ProfissionalDto>builder()
+        return ResponseDto.<ProfissionalDto>builder()
                 .status(HttpStatus.CREATED)
                 .response(profissional)
                 .build();
     }
 
     @PatchMapping("{proNrId}")
-    public ResponseEntity<ResponseDto<Void>> ativarOuInativar(@PathVariable long proNrId){
+    public ResponseEntity<ResponseDto<Void>> ativarOuInativar(@PathVariable long proNrId) {
         profissionalService.ativarDesativarProfissional(proNrId);
-        return  ResponseDto.<Void>builder()
+        return ResponseDto.<Void>builder()
                 .status(HttpStatus.CREATED)
                 .build();
     }
+
+    @GetMapping("mais-chamados")
+    public ResponseEntity<ResponseDto<Page<ProfissionalMaisChamadoDto>>> listarProfissionaisMaisChamados(
+            @RequestParam(required = false) Long munNrId,
+            @PageableDefault(size = Integer.MAX_VALUE) Pageable pageable) {
+        var profissionais = profissionalService.listarProfissionaisMaisChamados(pageable, munNrId);
+        return ResponseDto.<Page<ProfissionalMaisChamadoDto>>builder()
+                .response(profissionais)
+                .status(HttpStatus.CREATED)
+                .build();
+    }
+
+    @PutMapping("gerenciar-chamado")
+    public ResponseEntity<ResponseDto<Void>> ativarOuInativar(@RequestBody @Valid AtualizarChamadoForm form) {
+        profissionalService.atenderOuCancelarChamado(form);
+        return ResponseDto.<Void>builder()
+                .status(HttpStatus.CREATED)
+                .build();
+    }
+
 }

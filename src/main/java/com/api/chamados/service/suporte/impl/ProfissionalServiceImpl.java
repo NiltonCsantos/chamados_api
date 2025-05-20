@@ -1,26 +1,40 @@
 package com.api.chamados.service.suporte.impl;
 
+
+import com.api.chamados.config.exceptions.BadRequestException;
+import com.api.chamados.config.exceptions.NotFoundException;
+import com.api.chamados.model.atendimento.HistoricoChamadoEntidade;
+import com.api.chamados.model.atendimento.enums.StatusChamadoEnum;
+import com.api.chamados.repository.atendimento.ChamadoRepository;
+import com.api.chamados.repository.atendimento.HistoricoChamadoRepository;
 import com.api.chamados.repository.autenticacao.UsuarioRepository;
 import com.api.chamados.repository.suporte.ProfissionalRepository;
+import com.api.chamados.service.base.impl.BaseServiceImpl;
 import com.api.chamados.service.suporte.ProfissionalService;
 import com.api.chamados.service.suporte.dto.ProfissionalDto;
+import com.api.chamados.service.suporte.dto.ProfissionalMaisChamadoDto;
+import com.api.chamados.service.suporte.form.AtualizarChamadoForm;
 import com.api.chamados.service.suporte.form.ProfissionalFiltroForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
-public class ProfissionalServiceImpl implements ProfissionalService {
+public class ProfissionalServiceImpl extends BaseServiceImpl implements ProfissionalService {
 
     private final ProfissionalRepository profissionalRepository;
     private final UsuarioRepository usuarioRepository;
+    private final ChamadoRepository chamadoRepository;
+    private final HistoricoChamadoRepository historicoChamadoRepository;
 
     @Override
     public ProfissionalDto buscarProfissionalPorId(Long proNrId) {
         return profissionalRepository.findProfissionalById(proNrId)
-                .orElseThrow(() -> new RuntimeException("Não foi possível localizar profisisonal"));
+                .orElseThrow(() -> new NotFoundException("Não foi possível localizar profisisonal"));
     }
 
     @Override
@@ -31,13 +45,43 @@ public class ProfissionalServiceImpl implements ProfissionalService {
     @Override
     public void ativarDesativarProfissional(Long proNrId) {
         if (profissionalRepository.existsByChaAtivo(proNrId))
-            throw new RuntimeException("Não foi possível desativar o profisisonal, pois ele possui um ou mais chamados ativos");
+            throw new BadRequestException("Não foi possível desativar o profisisonal, pois ele possui um ou mais chamados ativos");
 
         var usuarioEntidade = usuarioRepository
                 .findById(proNrId)
-                .orElseThrow(() -> new RuntimeException("Não foi possível localizar profisisonal"));
+                .orElseThrow(() -> new NotFoundException("Não foi possível localizar profisisonal"));
 
         usuarioEntidade.setUsublAtivo(!usuarioEntidade.isUsublAtivo());
         usuarioRepository.save(usuarioEntidade);
+    }
+
+    @Override
+    public Page<ProfissionalMaisChamadoDto> listarProfissionaisMaisChamados(Pageable pageable, Long munNrId) {
+        return profissionalRepository.findTopChamados(pageable, munNrId);
+    }
+
+    @Override
+    public void atenderOuCancelarChamado(AtualizarChamadoForm form) {
+
+        var proNrId = this.buscarUsuarioAutenticado().getUsuNrId();
+
+        var chamado = chamadoRepository.findById(form.chaNrId())
+                .orElseThrow(() -> new NotFoundException("Chamado não encontrado"));
+
+        if (chamado.getChaTxUltimoStatus().equals(StatusChamadoEnum.CONCLUIDO) || chamado.getChaTxUltimoStatus().equals(StatusChamadoEnum.CANCELADO))
+            throw new BadRequestException("Chamado já cancelado ou criado na base");
+
+        var historico = HistoricoChamadoEntidade
+                .builder()
+                .hicTxStatus(form.chaTxStatus())
+                .hicTxJustificativa(form.hicTxJustificativa())
+                .hicDtAtualizacao(LocalDateTime.now())
+                .chaNrId(form.chaNrId())
+                .proNrId(proNrId)
+                .build();
+
+        chamado.setChaTxUltimoStatus(form.chaTxStatus());
+        chamadoRepository.save(chamado);
+        historicoChamadoRepository.save(historico);
     }
 }
