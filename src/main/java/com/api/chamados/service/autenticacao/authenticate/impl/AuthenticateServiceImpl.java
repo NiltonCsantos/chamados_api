@@ -92,7 +92,7 @@ public class AuthenticateServiceImpl implements AuthenticationService {
         if (celularFormatado.length()<11)
             throw new BadRequestException("Celular inválido");
 
-        var usuario = salvarUsuario(form, PerfilEnum.EMPRESA, proNrId);
+        var usuario = salvarUsuario(form, PerfilEnum.SUPORTE, proNrId);
 
         ProfissionalEntidade profissional = new ProfissionalEntidade();
 
@@ -112,7 +112,8 @@ public class AuthenticateServiceImpl implements AuthenticationService {
         var perfil = perfilRepository.findByPerfilUsuario(perTxNome)
                 .orElseThrow();
 
-        String encryptedPassword = new BCryptPasswordEncoder().encode(form.usuTxSenha() == null? UUID.randomUUID().toString() :form.usuTxSenha());
+        var senhaAleatoria =  UUID.randomUUID().toString();
+        String encryptedPassword = new BCryptPasswordEncoder().encode(form.usuTxSenha() == null? senhaAleatoria:form.usuTxSenha());
 
         var usuario = usuNrId != null ?
                 usuarioRepository.findById(usuNrId)
@@ -129,7 +130,7 @@ public class AuthenticateServiceImpl implements AuthenticationService {
         var token = tokenService.gerarTokenTemporario(usuario);
 
         if (usuNrId == null) {
-            emailService.sendMail(usuario.getUsuTxEmail(), usuario.getUsername(), encryptedPassword, token);
+            emailService.sendMail(usuario.getUsuTxEmail(), usuario.getUsername(), senhaAleatoria, token);
         }
 
         return usuario;

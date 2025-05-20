@@ -2,9 +2,7 @@ package com.api.chamados.controller.atendimento;
 
 import com.api.chamados.config.handler.ResponseDto;
 import com.api.chamados.service.atendimento.ChamadoService;
-import com.api.chamados.service.atendimento.dto.ChamadoDto;
-import com.api.chamados.service.atendimento.dto.ChamdoComHistoricoDto;
-import com.api.chamados.service.atendimento.dto.QuantidadeChamadosDto;
+import com.api.chamados.service.atendimento.dto.*;
 import com.api.chamados.service.atendimento.form.ChamadoFiltroForm;
 import com.api.chamados.service.atendimento.form.ChamadoForm;
 import io.swagger.v3.oas.annotations.Operation;
@@ -95,6 +93,30 @@ public class ChamadoController {
         var quantidadeChamadp = chamadoService.quantidadeChamadosPorStatus(munNrId);
 
         return ResponseDto.<QuantidadeChamadosDto>builder()
+                .status(HttpStatus.OK)
+                .response(quantidadeChamadp)
+                .build();
+    }
+
+    @GetMapping("/contar-equipe")
+    public ResponseEntity<ResponseDto<QuantidadeChamadoPorEquipe>> contarChamadosPorEquipe(
+            @RequestParam(required = false) Long munNrId) {
+        var quantidadeChamadp = chamadoService.QuantidadeChamadoPorEquipe(munNrId);
+
+        return ResponseDto.<QuantidadeChamadoPorEquipe>builder()
+                .status(HttpStatus.OK)
+                .response(quantidadeChamadp)
+                .build();
+    }
+
+    @GetMapping("/contar-mes")
+    public ResponseEntity<ResponseDto<Page<QuantidadeChamadoMensalDto>>> contarChamadosPorMes(
+            @RequestParam(required = false) Long munNrId,
+            @PageableDefault(size = Integer.MAX_VALUE) Pageable pageable
+    ) {
+        var quantidadeChamadp = chamadoService.getChamadosPorMes(munNrId,  pageable);
+
+        return ResponseDto.<Page<QuantidadeChamadoMensalDto>>builder()
                 .status(HttpStatus.OK)
                 .response(quantidadeChamadp)
                 .build();
