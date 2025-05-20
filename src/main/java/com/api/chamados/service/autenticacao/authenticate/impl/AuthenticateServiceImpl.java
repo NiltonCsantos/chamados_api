@@ -1,7 +1,7 @@
 package com.api.chamados.service.autenticacao.authenticate.impl;
 
 
-import com.api.chamados.config.exceptions.BadRaquestException;
+import com.api.chamados.config.exceptions.BadRequestException;
 import com.api.chamados.config.exceptions.NotFoundException;
 import com.api.chamados.model.autenticacao.CustomUserDetails;
 import com.api.chamados.model.autenticacao.UsuarioEntidade;
@@ -55,7 +55,7 @@ public class AuthenticateServiceImpl implements AuthenticationService {
     public void salvarEmpresa(UsuarioRegistroForm form, Long empNrId) {
 
         if (empNrId == null && empresaRepository.existsByEmpTxCnpj(form.empTxCnpj())) {
-            throw new BadRaquestException("Empresa já cadastrada");
+            throw new BadRequestException("Empresa já cadastrada");
         }
 
         if (!municipioRepository.existsById(form.munNrId()))
@@ -79,7 +79,7 @@ public class AuthenticateServiceImpl implements AuthenticationService {
     public void salvarProfissional(UsuarioRegistroForm form, Long proNrId) {
 
         if (profissionalRepository.existsByProTxCpfOrProTxCelular(form.proTxCpf(), form.proTxCelular(), proNrId)){
-            throw new NotFoundException("Já existe um profissional com esse CPF ou Celular cadastrado");
+            throw new BadRequestException("Já existe um profissional com esse CPF ou Celular cadastrado");
         }
 
         if (!equipeReposity.existsById(form.eqiNrId())){
@@ -90,7 +90,7 @@ public class AuthenticateServiceImpl implements AuthenticationService {
         var cpfFormatado = Regex.apenasNumeros(form.proTxCpf());
 
         if (celularFormatado.length()<11)
-            throw new BadRaquestException("Celular inválido");
+            throw new BadRequestException("Celular inválido");
 
         var usuario = salvarUsuario(form, PerfilEnum.EMPRESA, proNrId);
 
@@ -106,7 +106,7 @@ public class AuthenticateServiceImpl implements AuthenticationService {
     private UsuarioEntidade salvarUsuario(UsuarioRegistroForm form, PerfilEnum perTxNome, Long usuNrId) {
 
         if (usuNrId == null && this.usuarioRepository.findByUsuTxEmail(form.usuTxEmail()) != null) {
-            throw new BadRaquestException("Email já cadastrado");
+            throw new BadRequestException("Email já cadastrado");
         }
 
         var perfil = perfilRepository.findByPerfilUsuario(perTxNome)
@@ -163,7 +163,7 @@ public class AuthenticateServiceImpl implements AuthenticationService {
         CustomUserDetails user = usuarioRepository.findByUsuTxEmail(email);
 
         if (user == null) {
-            throw new BadRaquestException("Ocorreu um erro ao buscar o usuário");
+            throw new BadRequestException("Ocorreu um erro ao buscar o usuário");
         }
 
 

@@ -10,6 +10,8 @@ import com.api.chamados.repository.suporte.EquipeReposity;
 import com.api.chamados.service.atendimento.ChamadoService;
 import com.api.chamados.service.atendimento.dto.ChamadoDto;
 import com.api.chamados.service.atendimento.dto.ChamadoDtoComHistorico;
+import com.api.chamados.service.atendimento.dto.ChamdoComHistoricoDto;
+import com.api.chamados.service.atendimento.dto.QuantidadeChamadosDto;
 import com.api.chamados.service.atendimento.form.ChamadoFiltroForm;
 import com.api.chamados.service.atendimento.form.ChamadoForm;
 import com.api.chamados.service.base.impl.BaseServiceImpl;
@@ -20,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -62,15 +65,26 @@ public class ChamadoServiceImpl extends BaseServiceImpl implements ChamadoServic
         chamado.setEqiNrId(form.eqiNrId());
         chamado.setChaTxTitulo(form.chaTxTitulo());
 
-        var historico = HistoricoChamadoEntidade
-                .builder()
-                .chaDtAtualizacao(LocalDateTime.now())
-                .hicTxStatus(chamado.getChaNrId() != null ? StatusChamadoEnum.ALTERADO : StatusChamadoEnum.ABERTO)
-                .usuNrId(emprNrId)
-                .build();
+//        var historico = HistoricoChamadoEntidade
+//                .builder()
+//                .chaDtAtualizacao(LocalDateTime.now())
+//                .hicTxStatus(chamado.getChaNrId() != null ? StatusChamadoEnum.ALTERADO : StatusChamadoEnum.ABERTO)
+//                .usuNrId(emprNrId)
+//                .build();
 
         chamadoRepository.save(chamado);
-        historico.setChaNrId(chamado.getChaNrId());
-        historicoChamadoRepository.save(historico);
+//        historico.setChaNrId(chamado.getChaNrId());
+//        historicoChamadoRepository.save(historico);
+    }
+
+    @Override
+    public ChamdoComHistoricoDto buscarChamadoComHistoricoPorId(Long chaNrId) {
+        return chamadoRepository.findChamadoComHistoricoById(chaNrId)
+                .orElseThrow(() -> new NotFoundException("Não foi possível localizar chamado"));
+    }
+
+    @Override
+    public QuantidadeChamadosDto quantidadeChamadosPorStatus(Long munNrId) {
+        return chamadoRepository.countChamadosPorStatus(munNrId);
     }
 }
