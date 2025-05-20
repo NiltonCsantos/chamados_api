@@ -13,16 +13,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController("v1/estados")
 public class EstadoController {
-    @GetMapping()
-    public ResponseEntity<ResponseDto<Page<QuantidadeChamadoMensalDto>>> contarChamadosPorMes(
-            @RequestParam(required = false) Long munNrId,
-            @PageableDefault(size = Integer.MAX_VALUE) Pageable pageable
-    ) {
-        var quantidadeChamadp = chamadoService.getChamadosPorMes(munNrId,  pageable);
-
-        return ResponseDto.<Page<QuantidadeChamadoMensalDto>>builder()
-                .status(HttpStatus.OK)
-                .response(quantidadeChamadp)
-                .build();
-    }
+//    @GetMapping()
+//    public ResponseEntity<ResponseDto<Page<QuantidadeChamadoMensalDto>>> contarChamadosPorMes(
+//            @RequestParam(required = false) Long munNrId,
+//            @PageableDefault(size = Integer.MAX_VALUE) Pageable pageable
+//    ) {
+//        var quantidadeChamadp = chamadoService.getChamadosPorMes(munNrId,  pageable);
+//
+//        return ResponseDto.<Page<QuantidadeChamadoMensalDto>>builder()
+//                .status(HttpStatus.OK)
+//                .response(quantidadeChamadp)
+//                .build();
+//    }
 }
