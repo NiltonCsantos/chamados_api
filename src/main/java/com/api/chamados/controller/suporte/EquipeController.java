@@ -4,6 +4,8 @@ import com.api.chamados.config.handler.ResponseDto;
 import com.api.chamados.service.suporte.dto.EquipeDto;
 import com.api.chamados.service.atendimento.form.ChamadoFiltroForm;
 import com.api.chamados.service.suporte.EquipeService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -24,6 +26,9 @@ public class EquipeController {
     private final EquipeService equipeService;
 
     @GetMapping()
+    @Operation(summary = "Listar equipes", description = "Retorna uma lista de equipes cadastradas no sistema. "
+                    + "É possível filtrar pelo nome da equipe (eqiTxNome).")
+    @ApiResponse(responseCode = "200", description = "OK")
     public ResponseEntity<ResponseDto<Page<EquipeDto>>> listarEquipe(
             @RequestParam(required = false) String eqiTxNome,
             @PageableDefault(size = Integer.MAX_VALUE) Pageable pageable) {

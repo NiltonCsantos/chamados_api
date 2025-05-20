@@ -63,7 +63,8 @@ public class ChamadoController {
     }
 
 
-
+    @Operation(summary = "Buscar chamado por ID", description = "Endpoint responsável por buscar os detalhes de um chamado específico.")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ChamadoDto.class)))
     @GetMapping({"{chaNrId}"})
     public ResponseEntity<ResponseDto<ChamadoDto>> buscarChamadoPorId(
             @PathVariable long chaNrId) {
