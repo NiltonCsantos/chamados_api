@@ -46,4 +46,4 @@ jobs:
       - name: Remove docker container
         run: docker rm -f api_chamados
       - name: Run docker container
-        run: docker run --network ${{secrets.NETWORK}}  -d -p 8080:8080 -e DATABASE_USERNAME=${{secrets.DATABASE_USERNAME}} -e JWT_SECRET=${{secrets.JWT_SECRET}} -e DATABASE_PASSWORD='${{secrets.DATABASE_PASSWORD}}' -e DATABASE_URL=${{secrets.DATABASE_URL}} -e MAIL_HOST = ${{MAIL_HOST}} -e MAIL_PORT = ${{MAIL_PORT}} -e MAIL_USER_NAME = ${{MAIL_USER_NAME}} -e MAIL_PASSWORD = ${{MAIL_PASSWORD}} -e URL_CONFIRM = ${{URL_CONFIRM}}  --name api_chamados ${{secrets.DOCKER_USER_NAME}}/chamados
+        run: docker run --network ${{secrets.NETWORK}}  -d -p 8080:8080 -e DATABASE_USERNAME=${{secrets.DATABASE_USERNAME}} -e JWT_SECRET=${{secrets.JWT_SECRET}} -e DATABASE_PASSWORD='${{secrets.DATABASE_PASSWORD}}' -e DATABASE_URL=${{secrets.DATABASE_URL}} -e MAIL_HOST=${{MAIL_HOST}} -e MAIL_PORT=${{MAIL_PORT}} -e MAIL_USER_NAME=${{MAIL_USER_NAME}} -e MAIL_PASSWORD=${{MAIL_PASSWORD}} -e URL_CONFIRM=${{URL_CONFIRM}}  --name api_chamados ${{secrets.DOCKER_USER_NAME}}/chamados
