@@ -96,6 +96,7 @@ public class ChamadoController {
                 .status(HttpStatus.OK)
                 .response(quantidadeChamadp)
                 .build();
+
     }
 
     @GetMapping("/contar-equipe")
