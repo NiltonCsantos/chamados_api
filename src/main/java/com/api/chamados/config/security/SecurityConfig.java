@@ -33,6 +33,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(autorize -> autorize
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("v1/auth/**").permitAll()
+                        .requestMatchers("v1/cep/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "v1/chamados").hasRole("EMPRESA")
                         .requestMatchers(HttpMethod.GET, "v1/profissionais").hasRole("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.POST,"v1/admin/registrar-profissional").hasRole("ADMINISTRADOR")
