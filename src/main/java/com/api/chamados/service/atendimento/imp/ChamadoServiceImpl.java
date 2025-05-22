@@ -44,7 +44,13 @@ public class ChamadoServiceImpl extends BaseServiceImpl implements ChamadoServic
     public ChamadoDto buscarChamadoPorId(Long chaNrId) {
         var chamado = chamadoRepository.findById(chaNrId)
                 .orElseThrow(() -> new NotFoundException("Não foi possível localizar chamdo"));
-        return ChamadoDto.of(chamado, imagemService.getFileAsBase64(chamado.getChaTxImage()));
+
+         String base64 = null;
+        if (chamado.getChaTxImage() != null){
+            imagemService.getFileAsBase64(chamado.getChaTxImage());
+        }
+
+        return ChamadoDto.of(chamado, base64);
     }
 
     @Override
