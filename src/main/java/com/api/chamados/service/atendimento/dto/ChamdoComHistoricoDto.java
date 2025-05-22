@@ -10,6 +10,8 @@ public interface ChamdoComHistoricoDto {
     String getChaTxDescricao();
     String getUsuTxNome();
 
+    String getChaTxImage();
+
     @JsonSerialize(using = ListaDadosSerializer.class)
     List<String> getHistoricos();
 }

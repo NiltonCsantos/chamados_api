@@ -37,4 +37,6 @@ public class ChamadoEntidade {
     @Column(name = "cha_tx_titulo")
     private String chaTxTitulo;
 
+    @Column(name = "cha_tx_image")
+    private String chaTxImage;
 }

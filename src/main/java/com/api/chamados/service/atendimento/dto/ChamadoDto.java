@@ -13,10 +13,11 @@ public record ChamadoDto(
         Long eqiNrId,
         String chaTxTitulo,
         StatusChamadoEnum chaTxStatus,
-        LocalDateTime chaTxDtAbertura
+        LocalDateTime chaTxDtAbertura,
+        String chaTxImagem
 
 ) {
-    public static ChamadoDto of(ChamadoEntidade entidade) {
+    public static ChamadoDto of(ChamadoEntidade entidade, String chaTxDescricao) {
         if (entidade == null) return null;
         return new ChamadoDto(
                 entidade.getChaNrId(),
@@ -24,7 +25,8 @@ public record ChamadoDto(
                 entidade.getEqiNrId(),
                 entidade.getChaTxTitulo(),
                 entidade.getChaTxUltimoStatus(),
-                entidade.getChaDtAbertura()
+                entidade.getChaDtAbertura(),
+                chaTxDescricao
         );
     }
 }

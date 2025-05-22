@@ -32,6 +32,7 @@ public interface ChamadoRepository extends JpaRepository<ChamadoEntidade, Long> 
                     select
                     	cha.cha_tx_titulo,
                     	cha.cha_tx_descricao,
+                        cha.cha_tx_image,
                     	usu_empresa.usu_tx_nome,
                     	( select
                     			jsonb_agg(

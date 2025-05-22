@@ -43,6 +43,7 @@ public interface ProfissionalRepository extends JpaRepository<ProfissionalEntida
                             (:#{#filtro.proTxCpf()==null} or upper(pro.pro_tx_cpf) like upper(concat(coalesce(:#{#filtro.proTxCpf()}, ''), '%')))
                             or (:#{#filtro.proTxNome() == null } or upper(usu.usu_tx_nome) like upper(concat(coalesce(:#{#filtro.proTxNome()}, ''), '%')))
                         )
+                    and (:#{#filtro.proNrId() == null } or pro.pro_nr_id != :#{#filtro.proNrId()})
                     """)
     Page<ProfissionalDto> findAllByByFiltros(ProfissionalFiltroForm filtro, Pageable pageable);
 
@@ -96,4 +97,18 @@ public interface ProfissionalRepository extends JpaRepository<ProfissionalEntida
                       TotalChamados desc
                     """)
     Page<ProfissionalMaisChamadoDto> findTopChamados(Pageable pageable, Long munNrId);
+
+    @Query(nativeQuery = true,
+            value = """
+                    select
+                        pro.*,
+                        usu.usu_tx_nome
+                    from suporte.pro_profissional pro
+                    inner join autenticacao.usu_usuario usu on usu.usu_nr_id = pro.pro_nr_id
+                    inner join atendimento.hic_historico_chamado hic on hic.pro_nr_id = pro.pro_nr_id
+                    where hic.cha_nr_id =:chaNrId
+                    order by hic.hic_nr_id desc
+                    limit 1
+                    """)
+    ProfissionalDto findProfissionalByChaAtivo(Long chaNrId);
 }

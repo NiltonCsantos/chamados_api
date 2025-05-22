@@ -3,7 +3,8 @@ package com.api.chamados.service.suporte.form;
 public record ProfissionalFiltroForm(
         Long eqiNrId,
         String proTxCpf,
-        String proTxNome
+        String proTxNome,
+        Long proNrId
 ){
 
 }

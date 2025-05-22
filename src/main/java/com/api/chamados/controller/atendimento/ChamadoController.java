@@ -5,6 +5,7 @@ import com.api.chamados.service.atendimento.ChamadoService;
 import com.api.chamados.service.atendimento.dto.*;
 import com.api.chamados.service.atendimento.form.ChamadoFiltroForm;
 import com.api.chamados.service.atendimento.form.ChamadoForm;
+import com.api.chamados.service.atendimento.form.TransferenciaChamadoProfissionalForm;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -18,6 +19,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("v1/chamados")
@@ -29,9 +31,10 @@ public class ChamadoController {
     @PostMapping()
     @Operation(summary = "Cadastro de chamado", description = "Endpoint responsável por cadastrar um chamado.")
     @ApiResponse(responseCode = "201", description = "CREATED")
-    public ResponseEntity<ResponseDto<Void>> registrarChamado(@RequestBody @Valid ChamadoForm form){
-        chamadoService.gerenciarChamado(form, null);
-        return  ResponseDto.<Void>builder()
+    public ResponseEntity<ResponseDto<Void>> registrarChamado(@RequestPart("form") @Valid ChamadoForm form,
+                                                              @RequestPart(value = "imagem", required = false) MultipartFile imagem) {
+        chamadoService.gerenciarChamado(form, imagem, null);
+        return ResponseDto.<Void>builder()
                 .status(HttpStatus.CREATED)
                 .build();
     }
@@ -40,9 +43,10 @@ public class ChamadoController {
     @Operation(summary = "Atualização de chamado", description = "Endpoint responsável por atualizar um chamado.")
     @ApiResponse(responseCode = "204", description = "NO-CONTENT")
     public ResponseEntity<ResponseDto<Void>> atualizarChamado(@PathVariable long chaNrId,
-                                                              @RequestBody @Valid ChamadoForm form){
-        chamadoService.gerenciarChamado(form, chaNrId);
-        return  ResponseDto.<Void>builder()
+                                                              @RequestPart("form") @Valid ChamadoForm form,
+                                                              @RequestPart(value = "imagem", required = false) MultipartFile imagem) {
+        chamadoService.gerenciarChamado(form, imagem, chaNrId);
+        return ResponseDto.<Void>builder()
                 .status(HttpStatus.CREATED)
                 .build();
     }
@@ -63,7 +67,6 @@ public class ChamadoController {
     }
 
 
-
     @GetMapping({"{chaNrId}"})
     public ResponseEntity<ResponseDto<ChamadoDto>> buscarChamadoPorId(
             @PathVariable long chaNrId) {
@@ -77,11 +80,11 @@ public class ChamadoController {
     }
 
     @GetMapping("/historico/{chaNrId}")
-    public ResponseEntity<ResponseDto<ChamdoComHistoricoDto>> buscarChamadoComHistoricoPorId(
+    public ResponseEntity<ResponseDto<ChamdoComHistoricoContretoDto>> buscarChamadoComHistoricoPorId(
             @PathVariable long chaNrId) {
         var chamado = chamadoService.buscarChamadoComHistoricoPorId(chaNrId);
 
-        return ResponseDto.<ChamdoComHistoricoDto>builder()
+        return ResponseDto.<ChamdoComHistoricoContretoDto>builder()
                 .status(HttpStatus.OK)
                 .response(chamado)
                 .build();
@@ -115,11 +118,21 @@ public class ChamadoController {
             @RequestParam(required = false) Long munNrId,
             @PageableDefault(size = Integer.MAX_VALUE) Pageable pageable
     ) {
-        var quantidadeChamadp = chamadoService.getChamadosPorMes(munNrId,  pageable);
+        var quantidadeChamadp = chamadoService.getChamadosPorMes(munNrId, pageable);
 
         return ResponseDto.<Page<QuantidadeChamadoMensalDto>>builder()
                 .status(HttpStatus.OK)
                 .response(quantidadeChamadp)
+                .build();
+    }
+
+    @PutMapping("transferir-profissional")
+    @Operation(summary = "Transferencia de chamado", description = "Endpoint responsável por tranferir um chamado.")
+    @ApiResponse(responseCode = "204", description = "NO-CONTENT")
+    public ResponseEntity<ResponseDto<Void>> transferirChamado(@RequestBody @Valid TransferenciaChamadoProfissionalForm form) {
+        chamadoService.transferirChamado(form);
+        return ResponseDto.<Void>builder()
+                .status(HttpStatus.CREATED)
                 .build();
     }
 }

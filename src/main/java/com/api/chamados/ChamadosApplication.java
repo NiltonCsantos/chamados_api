@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @SpringBootApplication
 @EnableFeignClients
 @OpenAPIDefinition(info = @Info(title = "Teste API", version = "v1"))
+@EnableAsync
 public class ChamadosApplication {
 
 	public static void main(String[] args) {

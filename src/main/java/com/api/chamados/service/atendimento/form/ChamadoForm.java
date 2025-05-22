@@ -2,6 +2,7 @@ package com.api.chamados.service.atendimento.form;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.web.multipart.MultipartFile;
 
 public record ChamadoForm(
         @NotBlank(message = "É necessário informar a descricao do chamado")

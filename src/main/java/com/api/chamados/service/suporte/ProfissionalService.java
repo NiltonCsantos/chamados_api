@@ -14,4 +14,6 @@ public interface ProfissionalService {
     Page<ProfissionalMaisChamadoDto> listarProfissionaisMaisChamados(Pageable pageable, Long munNrId);
     void atenderOuCancelarChamado(AtualizarChamadoForm form);
 
+    ProfissionalDto buscarProfissionalEmUmChamado(Long chaNrId);
+
 }

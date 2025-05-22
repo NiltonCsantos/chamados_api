@@ -84,4 +84,9 @@ public class ProfissionalServiceImpl extends BaseServiceImpl implements Profissi
         chamadoRepository.save(chamado);
         historicoChamadoRepository.save(historico);
     }
+
+    @Override
+    public ProfissionalDto buscarProfissionalEmUmChamado(Long chaNrId) {
+        return profissionalRepository.findProfissionalByChaAtivo(chaNrId);
+    }
 }

@@ -8,7 +8,6 @@ import com.api.chamados.service.suporte.form.AtualizarChamadoForm;
 import com.api.chamados.service.suporte.form.ProfissionalFiltroForm;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,6 +37,15 @@ public class ProfissionalController {
     @GetMapping("{proNrId}")
     public ResponseEntity<ResponseDto<ProfissionalDto>> buscarPorId(@PathVariable long proNrId) {
         var profissional = profissionalService.buscarProfissionalPorId(proNrId);
+        return ResponseDto.<ProfissionalDto>builder()
+                .status(HttpStatus.CREATED)
+                .response(profissional)
+                .build();
+    }
+
+    @GetMapping("chamados/{chaNrId}")
+    public ResponseEntity<ResponseDto<ProfissionalDto>> buscarChamados(@PathVariable long chaNrId) {
+        var profissional = profissionalService.buscarProfissionalEmUmChamado(chaNrId);
         return ResponseDto.<ProfissionalDto>builder()
                 .status(HttpStatus.CREATED)
                 .response(profissional)
