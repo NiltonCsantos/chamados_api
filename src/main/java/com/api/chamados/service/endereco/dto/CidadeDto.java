@@ -3,7 +3,7 @@ package com.api.chamados.service.endereco.dto;
 import com.api.chamados.model.endereco.MunicipioEntidade;
 
 public record CidadeDto(
-    Long cidNrI,
+    Long cidNrId,
     String cidTxNome
 ) {
     public static CidadeDto of(MunicipioEntidade entidade) {
